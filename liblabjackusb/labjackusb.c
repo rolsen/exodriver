@@ -229,72 +229,80 @@ static bool LJUSB_isNullHandle(HANDLE hDevice)
 
 static int LJUSB_libusbError(int r)
 {
+	char * debugOutput = "";
+
     switch (r) {
     case LIBUSB_SUCCESS:
         // No error
         return 0;
         break;
     case LIBUSB_ERROR_IO:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_IO\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_IO\n";
         errno = EIO;
         break;
     case LIBUSB_ERROR_INVALID_PARAM:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_INVALID_PARAM\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_INVALID_PARAM\n";
         errno = EINVAL;
         break;
     case LIBUSB_ERROR_ACCESS:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_ACCESS\n");
+		debugOutput = "libusb error: LIBUSB_ERROR_ACCESS\n";
         errno = EACCES;
         break;
     case LIBUSB_ERROR_NO_DEVICE:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_NO_DEVICE\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_NO_DEVICE\n";
         errno = ENXIO;
         break;
     case LIBUSB_ERROR_NOT_FOUND:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_NOT_FOUND\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_NOT_FOUND\n";
         errno = ENOENT;
         break;
     case LIBUSB_ERROR_BUSY:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_BUSY\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_BUSY\n";
         errno = EBUSY;
         break;
     case LIBUSB_ERROR_TIMEOUT:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_TIMEOUT\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_TIMEOUT\n";
         errno = ETIMEDOUT;
         break;
     case LIBUSB_ERROR_OVERFLOW:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_OVERFLOW\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_OVERFLOW\n";
         errno = EOVERFLOW;
         break;
     case LIBUSB_ERROR_PIPE:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_PIPE\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_PIPE\n";
         errno = EPIPE;
         break;
     case LIBUSB_ERROR_INTERRUPTED:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_INTERRUPTED\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_INTERRUPTED\n";
         errno = EINTR;
         break;
     case LIBUSB_ERROR_NO_MEM:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_NO_MEM\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_NO_MEM\n";
         errno = ENOMEM;
         break;
     case LIBUSB_ERROR_NOT_SUPPORTED:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_NOT_SUPPORTED\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_NOT_SUPPORTED\n";
         errno = ENOSYS;
         break;
     case LIBUSB_ERROR_OTHER:
-        fprintf(stderr, "libusb error: LIBUSB_ERROR_OTHER\n");
+        debugOutput = "libusb error: LIBUSB_ERROR_OTHER\n";
         if (errno == 0) {
             errno = ENOSYS;
         }
         break;
     default:
-        fprintf(stderr, "libusb error: Unexpected error code: %d.\n", r);
+		if (LJ_DEBUG) {
+	        fprintf(stderr, "libusb error: Unexpected error code: %d.\n", r);
+		}
         if (errno == 0) {
             errno = ENOSYS;
         }
         break;
     }
+
+	if (LJ_DEBUG) {
+		fprintf(stderr, debugOutput);
+	}
 
     return -1;
 }
